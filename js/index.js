@@ -38,5 +38,86 @@ const siteContent = {
 };
 
 // Example: Update the img src for the logo
-let logo = document.getElementById("logo-img");
-logo.setAttribute('src', siteContent["nav"]["img-src"])
+
+let d = document;
+
+function lazyAssign(targetProp, slotString, subString){
+  
+  let propValues = [];
+  let propKeys = Object.keys(siteContent[`${targetProp}`]);
+  let slot = d.querySelectorAll(`${slotString}`);
+
+  propKeys.forEach(element => {
+    if (element.includes(`${subString}`)){
+      propValues.push(siteContent[`${targetProp}`][`${element}`])
+    }
+  });
+    
+  propValues.forEach((element, index) => {
+    slot[index].textContent = element; 
+  });
+}
+
+function lazyTxtImg(slotString, mainProp, subProp){
+  if (subProp.includes(`src`)){
+    d.querySelector(`${slotString}`).src = siteContent[`${mainProp}`][`${subProp}`];
+  }
+  else{
+    d.querySelector(`${slotString}`).textContent = siteContent[`${mainProp}`][`${subProp}`];
+  }
+}
+
+lazyAssign("nav","a","nav-item");
+lazyAssign("main-content",".main-content h4",'h4');
+lazyAssign("main-content",".main-content p",'content');
+lazyAssign("contact",".contact h4",'h4');
+lazyAssign("contact",".contact p",'e');
+
+lazyTxtImg("#logo-img", "nav", "img-src");
+lazyTxtImg("#cta-img", "cta" ,"img-src");
+lazyTxtImg("#middle-img", "main-content", "middle-img-src");
+lazyTxtImg("h1", "cta", "h1");
+lazyTxtImg(".cta-text button", "cta", "button");
+lazyTxtImg("footer p", "footer", "copyright");
+
+
+let navLinks = d.querySelectorAll(`nav a`);
+for(element of navLinks){element.style.color = "green"};
+d.querySelector(`h1`).style.border = "solid red";
+d.querySelector(`h1`).innerHTML = "DOM <br> Is <br> Awesome";
+
+
+const nav = document.querySelector('nav');
+
+const post = document.createElement('a');
+post.href = '#';
+post.textContent = '🙂'
+nav.appendChild(post);
+
+const pre = document.createElement('a')
+pre.href = '#';
+pre.textContent = '🙃';
+nav.prepend(pre);
+
+
+
+
+
+
+
+/*
+let mcH4Txt = [];
+let mcKeys = Object.keys(siteContent["main-content"]);
+let mcH4Slot = d.querySelectorAll(".main-content h4");
+console.log(mcH4Slot);
+
+mcKeys.forEach(element => {
+if (element.includes('h4')){
+  mcH4Txt.push(siteContent["main-content"][`${element}`])}
+});
+
+mcH4Txt.forEach((element, index) => {
+  mcH4Slot[index].textContent = element; 
+});
+*/
+
