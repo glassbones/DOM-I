@@ -41,29 +41,45 @@ const siteContent = {
 
 let d = document;
 
-function lazyAssign(targetProp, slotString, subString){
-  
+// funct takes 3 parameters
+// 1. state: An vauge Object property from above (header, footer, ect) in the form of a string. So we generally know where to look.
+// 2. DOMstring: An html tag / class / id in the form of a string, so we know what we are looking for.
+// 3. subString: A specific string to filter out unwanted properties by making sure the property includes the subString.
+function lazyAssign(state, DOMstring, subString){
+  // gonna store final array of values here
   let propValues = [];
-  let propKeys = Object.keys(siteContent[`${targetProp}`]);
-  let slot = d.querySelectorAll(`${slotString}`);
+  // grabbing all properties within the targeted property
+  let propKeys = Object.keys(siteContent[`${state}`]);
+  // slot is what we are looking for
+  let slot = d.querySelectorAll(`${DOMstring}`);
 
+  // grab what we are looking for and add it to our final array
+  // BUT ONLY IF IT CONTAINS THE SUBSTRING IN IT'S PROPERTIES!
   propKeys.forEach(element => {
     if (element.includes(`${subString}`)){
-      propValues.push(siteContent[`${targetProp}`][`${element}`])
+      propValues.push(siteContent[`${state}`][`${element}`])
     }
   });
-    
+  
+  //now we assign them to their respectable spots in the DOM thanks to index showing us where they belong
   propValues.forEach((element, index) => {
     slot[index].textContent = element; 
   });
 }
 
-function lazyTxtImg(slotString, mainProp, subProp){
-  if (subProp.includes(`src`)){
-    d.querySelector(`${slotString}`).src = siteContent[`${mainProp}`][`${subProp}`];
+// DOMstring is the where we want to put the data in the DOM
+// State is the a vague location for out data in the array (header, footer, nav, ect)
+// City is a specific location for our data within the vague location (ID or class)
+function lazyTxtImg(DOMstring, state, city){
+  //subProp contains "src"? 
+  if (city.includes(`src`)){
+    //DOM Location                          //Array Location
+    d.querySelector(`${DOMstring}`).src = siteContent[`${state}`][`${city}`];
   }
+  //this must me a <p> element 
   else{
-    d.querySelector(`${slotString}`).textContent = siteContent[`${mainProp}`][`${subProp}`];
+    //DOM Location                                   //Array Location
+    d.querySelector(`${DOMstring}`).textContent = siteContent[`${state}`][`${city}`];
   }
 }
 
@@ -80,44 +96,76 @@ lazyTxtImg("h1", "cta", "h1");
 lazyTxtImg(".cta-text button", "cta", "button");
 lazyTxtImg("footer p", "footer", "copyright");
 
-
+//make nav green
 let navLinks = d.querySelectorAll(`nav a`);
 for(element of navLinks){element.style.color = "green"};
-d.querySelector(`h1`).style.border = "solid red";
+
+//put line breaks in the Header text
 d.querySelector(`h1`).innerHTML = "DOM <br> Is <br> Awesome";
 
+//create and add elements to the nav
+const nav = d.querySelector('nav');
 
-const nav = document.querySelector('nav');
-
-const post = document.createElement('a');
+const post = d.createElement('a');
 post.href = '#';
 post.textContent = '🙂'
 nav.appendChild(post);
 
-const pre = document.createElement('a')
+const pre = d.createElement('a');
 pre.href = '#';
 pre.textContent = '🙃';
 nav.prepend(pre);
 
 
+/////////////////////////////////////////////////////////////
+///////////////////////// stretch ///////////////////////////
+/////////////////////////////////////////////////////////////
 
 
 
+// don't spoil the suprise for yourself if you are brave enough to click the button
+const dangerZone = d.querySelector("button");
+
+function btnReset(){
+  dangerZone.innerHTML = 'DANGER ZONE';
+  dangerZone.style.color = 'white';
+  dangerZone.style.backgroundColor = 'red';
+  dangerZone.style.transition = '300ms';
+  dangerZone.style.transform = 'scale(1) rotate(0deg)';
+};
+btnReset();
+  dangerZone.onmouseenter =()=>{
+  dangerZone.style.color = 'red';
+  dangerZone.style.backgroundColor = 'white';
+  dangerZone.innerHTML = '!!!!!!!! ⚠️ !!!!!!!!';
+  dangerZone.style.transform = 'scale(1.5) rotate(5deg)';
+};
 
 
-/*
-let mcH4Txt = [];
-let mcKeys = Object.keys(siteContent["main-content"]);
-let mcH4Slot = d.querySelectorAll(".main-content h4");
-console.log(mcH4Slot);
 
-mcKeys.forEach(element => {
-if (element.includes('h4')){
-  mcH4Txt.push(siteContent["main-content"][`${element}`])}
-});
+dangerZone.onmouseleave =()=>{btnReset()};
 
-mcH4Txt.forEach((element, index) => {
-  mcH4Slot[index].textContent = element; 
-});
-*/
+dangerZone.addEventListener('click', warningClick)
 
+function warningClick(event){
+  let warn = ('⚠️');
+
+  event.stopImmediatePropagation();
+  this.removeEventListener("click", warningClick);
+  alert(`${warn.repeat(10)}\nThis is your final warning.\n${warn.repeat(10)}`);
+  this.onclick = boom;
+}
+
+
+function boom(){
+  const body = d.querySelector('body');
+  const headImg = d.querySelector('#cta-img');
+  
+  new Audio('https://tinyurl.com/y7fwo5mn').play();
+  body.style.filter = `invert(1)`;
+  body.style.backgroundColor = `black`;
+  headImg.style.transition = `20000ms`;
+  headImg.style.transitionTimingFunction = 'ease-in-out';
+  headImg.src = "img/topgun.gif";
+  headImg.style.transform = 'rotate(1000deg) scale(8)';
+}
